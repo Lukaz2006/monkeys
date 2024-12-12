@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkeys</title>
+    <link rel="stylesheet" href="show.css">
+    
+</head>
+<body>
+    <div class="game">
+        <div class="header">
+            <img src="images/R.png" alt="coin">
+            <h2 class="score" id="score">42</h2>
+        </div>
+        <div class="circle">
+          
+            <button id="circlew" style="background-color: rgba(255, 255, 255, 0); border: none; outline: none;">
+                <img src="images/R__1_-removebg-preview.png" alt="smile">
+                
+            </button>
+        </div>
+    </div>
+    <script  src="script.js" defer></script>
+</body>
+</html>
+const circlew = document.querySelector('#circlew')
+const $score = document.querySelector('#score')
+
+function start(){
+   setScore(getScore())
+   setImage()
+}
+function setScore(score){
+   localStorage.setItem('score', score)
+   $score.textContent= score 
+}
+function getScore(){
+   return Number(localStorage.getItem('score')) ?? 0
+}
+function addOne(){
+   setScore(getScore() +1)
+   setImage()
+}
+function setImage(){
+   if(getScore()>=50){
+      circlew.getAttribute('src','images/OIP-removebg-preview')
+   }
+}
+
+circlew.addEventListener('click', event=> {
+   console.log('Click')
+   const rect = circlew.getBoundingClientRect()
+
+   const offsetX = event.clientX - rect.left - rect.width / 2
+   const offsetY = event.clientY - rect.right - rect.height / 2
+
+   const DEG = 40
+
+   const tiltX = (offsetY/rect.height) * DEG
+   const tiltY = (offsetX/rect.width) * -DEG
+    
+   circlew.style.setProperty('--tiltX', `${tiltX}deg`)
+   circlew.style.setProperty('--tiltY', `${tiltY}deg`)
+
+   setTimeout(()=>{
+      circlew.style.setProperty('--tiltX', `0deg`)
+      circlew.style.setProperty('--tiltY', `0deg`)
+   },300)
+
+   const plusOne = document.createElement('div')
+   plusOne.classList.add('plus-one')
+   plusOne.textContent='+1'
+   plusOne.style.left = `${event.clientX - rect.left}px`
+   plusOne.style.top = `${event.clientY - rect.top}px`
+
+   circlew.parentElement.appendChild(plusOne)
+   addOne()
+
+   setTimeout(()=>{
+     plusOne.remove()
+   },2000)
+})
+
+start()
+html, body{
+    margin: 0;
+    height:100;
+    padding: 0;
+    width:100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1c1f24;
+
+}
+.header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header img {
+  width: 50px;
+  height: 50px;
+  margin-right: 14px;
+}
+.score{
+    color: #fff;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 800;
+    user-select: none;
+}
+.circle{
+    position: relative;
+    
+}
+
+.circle img {
+    width: 200;
+    height: 200;
+    border-radius: 50%;
+    box-shadow: 0px 0px 16px 0px rgba(138,143,254,0.05);
+    transition: transform 0.2s ease;
+    --tiltX: 0deg;
+    --tiltY: 0deg;
+    transform: rotateX(var(--tiltX)) rotateY(var(--tiltY));
+}
+.plus-one {
+    position: absolute;
+    font-family: Inter;
+    text-shadow: 0px 0px 4px rgba(234,182,64,0.25);
+    font-size: 24px;
+    font-weight: 800;
+    background-color: linear-gradient(180deg,#e8c547 0%,#ef882b 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: whitesmoke;
+    pointer-events: none;
+    user-select: none;
+    animation: move-up 2s forwards;
+}
+
+@keyframes move-up{
+    0%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(-50px);
+    }
+}
 
